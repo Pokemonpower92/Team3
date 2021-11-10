@@ -66,14 +66,13 @@ ncols = []
 for n in range(2,topNum+2):
    ncols.append(sortcol[-1*n])
 
-nmask = sort_ind[-1*topNum:]
-
-
 npnew = idf.to_numpy()
 npcut = npnew[:, cmask.astype(bool)]
+npsort = npcut[:, sort_ind]
 
 ## npout stores numpy array of output
-npout = npcut[:, nmask]
+npoutf = npsort[:, -1*topNum - 1:-1]
+npout = np.flip(npoutf,1)
 ncols.insert(0, 'Salary')
 
 salaries = (pddata["Salary"].to_numpy()).reshape(874, 1)
