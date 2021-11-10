@@ -62,15 +62,19 @@ topNum = 20     ## Most correlated values with Salary
 # for n in range(2,topNum+2):
 #    print('COL: %s' % (sortcol[-1*n]))
 
+ncols = []
+for n in range(2,topNum+2):
+   ncols.append(sortcol[-1*n])
+
 nmask = sort_ind[-1*topNum:]
-ncols = sortcol[-1*topNum:]
+
 
 npnew = idf.to_numpy()
 npcut = npnew[:, cmask.astype(bool)]
 
 ## npout stores numpy array of output
 npout = npcut[:, nmask]
-ncols = np.insert(ncols, 0, 'Salary', axis=0)
+ncols.insert(0, 'Salary')
 
 salaries = (pddata["Salary"].to_numpy()).reshape(874, 1)
 new_data = pd.DataFrame(np.hstack([salaries, npout]), columns=ncols)
