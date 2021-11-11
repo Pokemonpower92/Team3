@@ -44,23 +44,13 @@ ncor = icor[cmask.astype(bool),:]
 ncor = ncor[:, cmask.astype(bool)]
 ndfcol = idfcol[cmask.astype(bool)]
 
-## print(ncor.shape)
-
-## print('')
-
 ycor = np.absolute(ncor[0,:])
-
-## Sortcol stores the columns most correlated with salary in ascending order
 
 sort_ind = np.argsort(ycor)
 sorty = ycor[sort_ind]
 sortcol = ndfcol[sort_ind]
 
 topNum = 20     ## Most correlated values with Salary
-
-# print('Top Correlated Number Cols to Salary')
-# for n in range(2,topNum+2):
-#    print('COL: %s' % (sortcol[-1*n]))
 
 ncols = []
 for n in range(2,topNum+2):
@@ -75,7 +65,14 @@ npoutf = npsort[:, -1*topNum - 1:-1]
 npout = np.flip(npoutf,1)
 ncols.insert(0, 'Salary')
 
-salaries = (pddata["Salary"].to_numpy()).reshape(874, 1)
-new_data = pd.DataFrame(np.hstack([salaries, npout]), columns=ncols)
+salaries = (pddata["Salary"].to_numpy()).reshape(874,1)
 
-new_data.to_csv(data_dir+"/clean_data.csv", encoding='utf-8')
+data = np.hstack([salaries, npout])
+col_mean = np.nanmean(data, axis=0)
+print(col_mean)
+inds = np.where(np.isnan(data))
+data[inds] = np.take(col_mean, inds[1])
+
+
+new_data = pd.DataFrame(data, columns=ncols)
+new_data.to_csv(data_dir+"/clean_data.csv", encoding='utf-8', index=False)
