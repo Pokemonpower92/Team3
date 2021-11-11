@@ -13,6 +13,8 @@ idf = pddata.select_dtypes(include=np.number)
 idfcol = np.array(idf.columns.tolist())
 icor = np.array(idf.corr())
 
+print('Number of numerical features: {}'.format(idf.shape))
+
 ## Get Rid of Correlated Values
 
 mincor = .9
@@ -25,6 +27,8 @@ for i in range(1, idfcol.size):
         if(abs(icor[i][j]) > mincor):
             ## print('%s  &  %s  :  %f' % (idfcol[i], idfcol[j], icor[i][j]))
             close = np.append(close, np.array([[i], [j]]), axis=1)
+
+
 
 cmask = np.ones(idfcol.size)
 
@@ -43,6 +47,8 @@ for k in range(1, int(close.size/2)):
 ncor = icor[cmask.astype(bool),:]
 ncor = ncor[:, cmask.astype(bool)]
 ndfcol = idfcol[cmask.astype(bool)]
+
+print("Number of features under correlation threashold: {}".format(len(ndfcol)))
 
 ycor = np.absolute(ncor[0,:])
 
@@ -69,7 +75,7 @@ salaries = (pddata["Salary"].to_numpy()).reshape(874,1)
 
 data = np.hstack([salaries, npout])
 col_mean = np.nanmean(data, axis=0)
-print(col_mean)
+
 inds = np.where(np.isnan(data))
 data[inds] = np.take(col_mean, inds[1])
 
