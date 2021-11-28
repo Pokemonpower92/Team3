@@ -56,7 +56,7 @@ sort_ind = np.argsort(ycor)
 sorty = ycor[sort_ind]
 sortcol = ndfcol[sort_ind]
 
-topNum = 20     ## Most correlated values with Salary
+topNum = 30     ## Most correlated values with Salary
 
 ncols = []
 for n in range(2,topNum+2):
