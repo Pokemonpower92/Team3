@@ -57,8 +57,6 @@ def do_regression(X_train, y_train, X_test, y_test):
 
     return results, best_index
 
-    
-
 if __name__ == '__main__':
 
     datafile = os.path.abspath(os.path.dirname(__file__)) + "/../data/clean_data.csv"
