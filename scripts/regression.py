@@ -7,6 +7,7 @@ import json
 import matplotlib.pyplot as plt
 import os.path
 import pandas as pd
+import numpy as np
 
 from sklearn.utils._testing import ignore_warnings
 from sklearn.model_selection import train_test_split, cross_val_score
@@ -14,6 +15,16 @@ from sklearn.preprocessing import StandardScaler
 from sklearn.model_selection import GridSearchCV
 from sklearn.linear_model import Lasso, Ridge, ElasticNet
 from sklearn.metrics import r2_score
+
+def plot_reg_line(y_pred, y_test, name):
+    plt.scatter(y_test, y_pred, color='blue', alpha=0.4)
+    plt.xlabel('True Salary Data')
+    plt.ylabel('Predicted Salary Data')
+    m, b = np.polyfit(y_test, y_pred, 1)
+    plt.plot(y_test, m*y_test+b, color='red')
+    plt.title(name+' Regression Line over Salary Data')
+    plt.savefig(image_dir+name+'_reg_line.png')
+    plt.clf()
 
 def do_regression(X_train, y_train, X_test, y_test):
 
@@ -55,11 +66,14 @@ def do_regression(X_train, y_train, X_test, y_test):
             'Test Score': r2_score(y_test, y_pred)
         })
 
+        plot_reg_line(y_pred, y_test, name)
+
     return results, best_index
 
 if __name__ == '__main__':
 
     datafile = os.path.abspath(os.path.dirname(__file__)) + "/../data/clean_data.csv"
+    image_dir = os.path.abspath(os.path.dirname(__file__)) + "/../images/"
     df = pd.read_csv(datafile, skipinitialspace=True)
     df = df.select_dtypes(include='number')
     df = df.fillna(df.mean())
