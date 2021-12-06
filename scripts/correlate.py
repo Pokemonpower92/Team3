@@ -56,7 +56,7 @@ sort_ind = np.argsort(ycor)
 sorty = ycor[sort_ind]
 sortcol = ndfcol[sort_ind]
 
-topNum = 30     ## Most correlated values with Salary
+topNum = 10     ## Most correlated values with Salary
 
 ncols = []
 for n in range(2,topNum+2):
@@ -81,4 +81,4 @@ data[inds] = np.take(col_mean, inds[1])
 
 
 new_data = pd.DataFrame(data, columns=ncols)
-new_data.to_csv(data_dir+"/clean_data.csv", encoding='utf-8', index=False)
+new_data.to_csv(data_dir+"/clean_data_10.csv", encoding='utf-8', index=False)

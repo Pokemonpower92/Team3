@@ -16,17 +16,18 @@ from sklearn.model_selection import GridSearchCV
 from sklearn.linear_model import Lasso, Ridge, ElasticNet
 from sklearn.metrics import r2_score
 
-def plot_reg_line(y_pred, y_test, name):
+def plot_reg_line(y_pred, y_test, name, features):
+
     plt.scatter(y_test, y_pred, color='blue', alpha=0.4)
     plt.xlabel('True Salary Data')
     plt.ylabel('Predicted Salary Data')
     m, b = np.polyfit(y_test, y_pred, 1)
     plt.plot(y_test, m*y_test+b, color='red')
     plt.title(name+' Regression Line over Salary Data')
-    plt.savefig(image_dir+name+'_reg_line.png')
+    plt.savefig(image_dir+name+'_reg_line_'+features+'.png')
     plt.clf()
 
-def do_regression(X_train, y_train, X_test, y_test):
+def do_regression(X_train, y_train, X_test, y_test, features):
 
     alpha = [0.001, 0.01, 0.1, 1, 10, 100, 1000]
 
@@ -41,7 +42,6 @@ def do_regression(X_train, y_train, X_test, y_test):
     }
 
     param_grid = dict(alpha=alpha)
-
 
     best_training_score = 0
     best_index = None
@@ -66,40 +66,43 @@ def do_regression(X_train, y_train, X_test, y_test):
             'Test Score': r2_score(y_test, y_pred)
         })
 
-        plot_reg_line(y_pred, y_test, name)
+        plot_reg_line(y_pred, y_test, name, features)
 
     return results, best_index
 
 if __name__ == '__main__':
 
-    datafile = os.path.abspath(os.path.dirname(__file__)) + "/../data/clean_data.csv"
-    image_dir = os.path.abspath(os.path.dirname(__file__)) + "/../images/"
-    df = pd.read_csv(datafile, skipinitialspace=True)
-    df = df.select_dtypes(include='number')
-    df = df.fillna(df.mean())
+    features = ['10', '20', '30']
 
-    X = df.loc[:, df.columns != 'Salary'].to_numpy()
-    y = df['Salary'].to_numpy()
+    for f in features:
+        datafile = os.path.abspath(os.path.dirname(__file__)) + "/../data/clean_data_" + f + '.csv'
+        image_dir = os.path.abspath(os.path.dirname(__file__)) + "/../images/"
+        df = pd.read_csv(datafile, skipinitialspace=True)
+        df = df.select_dtypes(include='number')
+        df = df.fillna(df.mean())
 
-    Xscaler = StandardScaler().fit(X)
-    X = Xscaler.transform(X)
+        X = df.loc[:, df.columns != 'Salary'].to_numpy()
+        y = df['Salary'].to_numpy()
 
-    X_train, X_test, y_train, y_test = train_test_split(X,
-                                                        y,
-                                                        test_size=0.20)
+        Xscaler = StandardScaler().fit(X)
+        X = Xscaler.transform(X)
 
-    print("Running the regression...\n")
-    results, best_index = do_regression(X_train, y_train, X_test, y_test)
+        X_train, X_test, y_train, y_test = train_test_split(X,
+                                                            y,
+                                                            test_size=0.20)
 
-    print("...done\n")
+        print("Running the regression...\n")
+        results, best_index = do_regression(X_train, y_train, X_test, y_test, f)
 
-    print("Results:\n")
-    for r in results:
-        print(json.dumps(r, indent=4, sort_keys=True))
+        print("...done\n")
+
+        print("Results:\n")
+        for r in results:
+            print(json.dumps(r, indent=4, sort_keys=True))
+            print()
+
+        print("Best performer: \n")
+        print(json.dumps(results[best_index], indent=4, sort_keys=True))
         print()
-
-    print("Best performer: \n")
-    print(json.dumps(results[best_index], indent=4, sort_keys=True))
-    print()
     
 
